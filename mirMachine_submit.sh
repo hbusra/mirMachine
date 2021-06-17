@@ -64,7 +64,7 @@ while [ "$1" != "" ]; do
             if [ $1 -eq 0]; then 
             	$1=""
             fi
-            number_of_hits=$1
+            	number_of_hits=$1
         ;;
         -m | --mismatches )
             shift
