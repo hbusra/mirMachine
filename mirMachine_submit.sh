@@ -4,7 +4,7 @@
 usage()
 {
 cat << EOF
-usage: bash mirMachine_submit.sh -f fasta_file -s search_file [OPTIONS] 
+usage: bash mirMachine_submit.sh -f fasta_file -i input_file [OPTIONS] 
 Basic parameters
 -f    | --fasta_file         (FASTA file.                    The reference FASTA file to search for miRNAs
                              required unless -db provided)
@@ -13,7 +13,7 @@ Basic parameters
 -i    | --input_file         (mature miRNA FASTA file        Fasta file for known mature miRNA sequences
                              Required)
 -m    | --mismatches         (default to 1)                  Number of mismatches for mir_find hits
--n    | --number_of_hits     (default to 100. Set 0 for 
+-n    | --number_of_hits     (default to 20. Set 0 for 
                              infinite number of hits)        Number of hits to eliminate as siRNA in mir_fold
 -long                        (Optional)                      To assess secondary structure of the suspect list
 
@@ -36,6 +36,8 @@ sRNAseq="false"
 lmax=24
 lmin=20
 rpm=10
+
+BASEDIR="${BASH_SOURCE[0]%/mirMachine_submit.sh}"
 
 if [ $# -eq 0 ]; then
     usage
@@ -109,6 +111,7 @@ if [ -z $input_file ]; then
 fi
 
 
+
 echo "Mature miRNA sequences = ${input_file}"
 echo "Number of mismatches   = ${mismatches}"
 echo "Number of hits allowed = ${number_of_hits}"
@@ -133,28 +136,28 @@ if [ $sRNAseq == "true" ]; then
     echo "==============================================================================="
     echo "sRNAseq preprocessing..."
     echo "==============================================================================="
-    perl mir_filter_reads.pl $input_file $lmin $lmax $rpm
+    $BASEDIR/mir_filter_reads.pl $input_file $lmin $lmax $rpm
 
 	echo
 	echo "Running mir_find..."
 	echo "==============================================================================="
-	echo $mismatches | perl mir_find.pl $input_file.filtered.fasta $blast_database
+	echo $mismatches | $BASEDIR/mir_find.pl $input_file.filtered.fasta $blast_database
 
 	echo
 	echo "Running mir_fold..."
 	echo "==============================================================================="
-	echo $number_of_hits | perl mir_fold.pl $input_file.nr.fasta $input_file.filtered.fasta.results.tbl $blast_database $run $sRNAseq
+	echo $number_of_hits | $BASEDIR/mir_fold.pl $input_file.nr.fasta $input_file.filtered.fasta.results.tbl $blast_database $run $sRNAseq
 else
 	echo
 	echo "Running mir_find..."
 	echo "==============================================================================="
-	echo $mismatches | perl mir_find.pl $input_file $blast_database
+	echo $mismatches | $BASEDIR/mir_find.pl $input_file $blast_database
 
 
 	echo
 	echo "Running mir_fold..."
 	echo "==============================================================================="
-	echo $number_of_hits | perl mir_fold.pl $input_file $input_file.results.tbl $blast_database $run $sRNAseq
+	echo $number_of_hits | $BASEDIR/mir_fold.pl $input_file $input_file.results.tbl $blast_database $run $sRNAseq
 fi
 
 echo
