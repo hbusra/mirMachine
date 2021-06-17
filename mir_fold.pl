@@ -16,7 +16,7 @@ my ( $mirnaquery, $infile, $blastdb, $run, $sRNAseq ) = @ARGV or die "Please spe
 
 # Check for presence of UNAFold and maximum number of folds
 
-print "---  miRNaL_fold.pl v1.0.0  ---\n";
+print "---  mir_fold.pl v1.0.0  ---\n";
 system ("RNAfold -V > unachk.tmp");
 open ( UNAREPORT, "unachk.tmp") or die "RNAfold is not available.  Please check that it is installed and in your PATH.\n";
 while ($firstline = <UNAREPORT>)
