@@ -9,7 +9,7 @@ my $loopno = 0;
 if ( $#ARGV != 4 )
 {
 	print "Correct usage is:\n";
-	print "perl miRNaL_fold.pl [miRNA query file] [HitTable] [BLASTdb] [long/short] [true/false]\n";
+	print "perl mir_fold.pl [miRNA query file] [HitTable] [BLASTdb] [long/short] [true/false]\n";
 }
 
 my ( $mirnaquery, $infile, $blastdb, $run, $sRNAseq ) = @ARGV or die "Please specify names of a file containing known miRNAs (in fasta format), BLAST hit table (generated using '-outfmt 6' when running BLAST) and blast database from which the hit table was generated.\n";
@@ -27,7 +27,7 @@ while ($firstline = <UNAREPORT>)
 	last;
 }
 unlink ("unachk.tmp");
-print "miRNAs that produced a large number of hits with SUmirFind\n may be matching repeat elements instead of real miRNAs.\nTo save computing time, you can limit the number of hits \nto be folded for any miRNA.\n";
+print "miRNAs that produced a large number of hits with mir_find\n may be matching repeat elements instead of real miRNAs.\nTo save computing time, you can limit the number of hits \nto be folded for any miRNA.\n";
 #print "Please enter the maximum no. of hits to be folded (press Return for no limit): ";
 my $maxhits = <STDIN>;
 chomp $maxhits;

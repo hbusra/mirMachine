@@ -1,11 +1,11 @@
-#!perl -w
-# miRNaL_find.pl - a script that uses ncbiBLAST to search for potential homologs of known miRNAs
-# Modified as miRNaL_find.pl, 2021
+#!/usr/bin/perl -w
+# mir_find.pl - a script that uses ncbiBLAST to search for potential homologs of known miRNAs
+# Modified as mir_find.pl, 2021
 # Written by Stuart J. Lucas, 2012
 # Version History:
 # v1.1, 23.01.2013: Added option to specify number of mismatches, more feedback during running, and set to delete temporary files.
 
-print "\n\n+++ miRNaL_find.pl v1.0.0 +++\n\n";
+print "\n\n+++ mir_find.pl v1.0.0 +++\n\n";
 
 my ( $mirnaquery, $blastdatabase ) = @ARGV or die "Please specify a fasta file containing the miRNA sequences you wish to search with, and the BLAST database you wish to search, with full path if it is not in the current directory";
 
