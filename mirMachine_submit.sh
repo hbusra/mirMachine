@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 
 usage()
@@ -61,10 +61,10 @@ while [ "$1" != "" ]; do
         ;;
         -n | --number_of_hits )
             shift        
-            if [ $1 -eq 0]; then 
+            if [ $1 -eq 0 ]; then 
             	$1=""
             fi
-            	number_of_hits=$1
+            number_of_hits=$1
         ;;
         -m | --mismatches )
             shift

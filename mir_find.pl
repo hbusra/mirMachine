@@ -1,4 +1,8 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
+
+use warnings;
+use strict;
+
 # mir_find.pl - a script that uses ncbiBLAST to search for potential homologs of known miRNAs
 # Modified as mir_find.pl, 2021
 # Written by Stuart J. Lucas, 2012
@@ -33,7 +37,7 @@ open ( MIRNATABLE, ">".$mirnaquery.".tbl" ) or die "Could not open an output fil
 
 print MIRNATABLE "# miRNA ID\tsequence";
 
-while($line = <MIRNAS>)
+while(my $line = <MIRNAS>)
 {
 	chomp $line;	
 	$line =~ s/\r//;
@@ -59,7 +63,7 @@ print "$mirnacount miRNA sequences detected in query file.\n";
 my (%QuerymiRNAs);
 open ( MIRNADATA, $mirnaquery.".tbl" ) or die "The miRNA table was not generated";
 
-while ($line = <MIRNADATA>)
+while (my $line = <MIRNADATA>)
 {
 	chomp $line;
 	if ( $line =~ /^#/ )
@@ -94,7 +98,7 @@ print FILTEREDHITS "# Query ID\tSubject ID\t%\tlength\tmism\tgaps\tqstart\tqend\
 
 my $badcount = 0;
 my $goodcount = 0;
-while ( $line = <BLASTHITS> )
+while (my $line = <BLASTHITS> )
 {
 	chomp $line;	
 	my ( $qid, $sid, $percent, $allength, $mismatch, $gaps, $qstart, $qend, $sstart, $send, $evalue, $bitscore ) = split /\t/, $line;

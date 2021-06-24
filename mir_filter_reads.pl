@@ -1,4 +1,7 @@
-#!/bin/perl -w
+#!/usr/bin/perl
+
+use warnings;
+use strict;
 
 
 my ($mirnaquery, $minlen, $maxlen, $rpm_cutoff) = @ARGV or die "Please specify the name of a file containing miRNAs (in fasta format), minimum length for a miRNA, maximum length of a miRNA, and the RPM threshold\n";

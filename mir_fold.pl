@@ -1,5 +1,7 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
+use warnings;
+use strict;
 use List::Util qw[min max];
 my $goodcount = 0;
 my $badcount = 0;
@@ -19,11 +21,10 @@ my ( $mirnaquery, $infile, $blastdb, $run, $sRNAseq ) = @ARGV or die "Please spe
 print "---  mir_fold.pl v1.0.0  ---\n";
 system ("RNAfold -V > unachk.tmp");
 open ( UNAREPORT, "unachk.tmp") or die "RNAfold is not available.  Please check that it is installed and in your PATH.\n";
-while ($firstline = <UNAREPORT>)
+while (my $line = <UNAREPORT>)
 {
-	chomp $firstline;
-#	$firstline = substr ($firstline, 21);
-	print "RNAfold version $firstline detected\n";
+	chomp $line;
+	print "RNAfold version $line detected\n";
 	last;
 }
 unlink ("unachk.tmp");
@@ -49,7 +50,8 @@ open ( STARTABLE, ">".$mirnaquery.".tbl" ) or die "Could not open an output file
 
 print STARTABLE "# miRNA ID\tsequence\n";
 my (%QuerymiRNAs);
-while ($line = <MIRNAS>) {
+my $idkey;
+while (my $line = <MIRNAS>) {
 	chomp $line;
 	$line =~ s/\r//;
 	if ($line =~ /^>(\S+)\s*/) {
@@ -91,7 +93,7 @@ print SUSPECT "#Filename        \tSequence ID\tstart\tend\tmiRNA    \tlength\tst
 
 my $samecount = 0;
 my $samename = "";
-while ($line = <IN>) {
+while (my $line = <IN>) {
 	chomp $line;
 	$line =~ s/\r//;
 	next if $line =~ /^#/;
@@ -153,7 +155,7 @@ while ($line = <IN>) {
 		$tempseq =~ tr/C/g/;
 		$tempseq =~ tr/G/c/;
 		$tempseq =~ tr/acgu/ACGU/;
-		$seqlength = length ($tempseq);
+		my $seqlength = length ($tempseq);
 		$sstart = 1 + $seqlength - $sstart;
 		$send = 1 + $seqlength - $send;
 		if ($seqlength > 750)
@@ -199,7 +201,7 @@ while ($line = <IN>) {
 		if (length ($tempseq) > 750)
 		{
 			print LOGFILE "Long sequence, clipping 300bp either side of miRNA\n";
-			$clipstart = $sstart - 300;
+			my $clipstart = $sstart - 300;
 			if ($clipstart < 0)
 			{
 				$clipstart = 0;
@@ -241,9 +243,9 @@ while ($line = <IN>) {
 	my $revend = 0;
 	my $revendbackup = 0;
 	my $revlength = 0;
-	$seq = "";
-	$mfe=0; 
-	$nucleotides="";
+	my $seq = "";
+	my $mfe=0; 
+	my $nucleotides="";
 	while ($line = <FOLD>) {
 		chomp $line;
 		$linecount++;
@@ -268,12 +270,12 @@ while ($line = <IN>) {
 		} elsif ( $i eq "(" ) {
 			push(@stack, $linecount);
 		} elsif ( $i eq ")" ) {
-			$value = pop(@stack);
+			my $value = pop(@stack);
 			$data{$linecount} = $value;
 			$data{$value} = $linecount;
 		}
 	}
-	$GCcount = () = $nucleotides =~ /G|C/g;
+	my $GCcount = () = $nucleotides =~ /G|C/g;
 
 	$linecount=0;
 	foreach my $i (@spl) { 
@@ -411,7 +413,7 @@ print RESULTS "Unique\tNew miRNA\t\t\tConserved miRNA\t\t\tSequence\tMature\tMat
 print RESULTS "Hit ID\tID\tSequence\tLength\tID\tSequence\tMismatch\tID\tStart\tEnd\tStart\tEnd\tSequence\tlocation\tlength\tMFE\tGC%\tMFEI\tstart\tsequence\n";
 my $goodhairpins = 0;
 
-while ( $line = <GOODTABLE> ) {
+while (my $line = <GOODTABLE> ) {
 	chomp $line;
 	next if $line =~ /^#/;
 	my ( $uniqueid, $sseqid, $mirstart, $mirend, $mirnaid, $length, $sstart, $send, $revstart, $revend ) = split /\t/, $line;
@@ -457,10 +459,10 @@ while ( $line = <GOODTABLE> ) {
 	}
 	$hairpinlength = $hairpinend - $hairpinstart + 1;
 	
-	$hairpinseq = substr $seq, ($hairpinstart-1), $hairpinlength;
-	$matseq = substr $seq, ($sstart-1), $length;	
-	$matstart = $sstart - $hairpinstart+1;
-	$matend = $send - $hairpinstart+1;
+	my $hairpinseq = substr $seq, ($hairpinstart-1), $hairpinlength;
+	my $matseq = substr $seq, ($sstart-1), $length;	
+	my $matstart = $sstart - $hairpinstart+1;
+	my $matend = $send - $hairpinstart+1;
 	
 	print LOGFILE2 "Hairpin stats (start, end, length):\n";
 	print LOGFILE2 "$hairpinstart\t$hairpinend\t$hairpinlength\n";
@@ -485,10 +487,10 @@ while ( $line = <GOODTABLE> ) {
 # Examine the st file for unpaired bases in the miRNA sequence
 	open ( HAIRPINFOLD, $uniqueid.".hairpin.fsa.st" ) or die "where is the st file?";
 
-	$linecount = 0;
+	my $linecount = 0;
 	$seq = "";
-	$mfe=0; 
-	$nucleotides="";
+	my $mfe=0; 
+	my $nucleotides="";
 	while ($line = <HAIRPINFOLD>) {
 		chomp $line;
 		$linecount++;
@@ -502,9 +504,9 @@ while ( $line = <GOODTABLE> ) {
 	}
 	close HAIRPINFOLD;
 
-	@spl = split(//, $seq);
-	@stack = ();
-	%data=();
+	my @spl = split(//, $seq);
+	my @stack = ();
+	my %data=();
 	$linecount = 0;
 	foreach my $i (@spl) { 
 		$linecount++;
@@ -513,12 +515,12 @@ while ( $line = <GOODTABLE> ) {
 		} elsif ( $i eq "(" ) {
 			push(@stack, $linecount);
 		} elsif ( $i eq ")" ) {
-			$value = pop(@stack);
+			my $value = pop(@stack);
 			$data{$linecount} = $value;
 			$data{$value} = $linecount;
 		}
 	}
-	$GCcount = () = $nucleotides =~ /G|C/g;
+	my $GCcount = () = $nucleotides =~ /G|C/g;
 
 	my $starstart = 0;
 	my $starend = 0;
@@ -546,13 +548,14 @@ while ( $line = <GOODTABLE> ) {
 		}
 	}
 
-	$start = min($starstart, $matstart, $starend, $matend);
-	$end = max($starstart, $matstart, $starend, $matend);
-	$multiloopflag=0;
-	$headflag = 0;
-	$check = 0;
-	$headsize = 0;
+	my $start = min($starstart, $matstart, $starend, $matend);
+	my $end = max($starstart, $matstart, $starend, $matend);
+	my $multiloopflag=0;
+	my $headflag = 0;
+	my $check = 0;
+	my $headsize = 0;
 	my $k = 0;
+	my $temp = 0;
 	$linecount=0;
 	foreach my $i (@spl) { 
 		$linecount++;
@@ -632,7 +635,7 @@ while ( $line = <GOODTABLE> ) {
 	}
 	my $mfei = $amfe/$GCcomp;
 	my $mism = 0;
-	for ($loopcount = 0; $loopcount < $length; $loopcount++) {
+	for (my $loopcount = 0; $loopcount < $length; $loopcount++) {
 		$mism++ if substr ($conseq, $loopcount, 1) ne substr ($matseq, $loopcount, 1);
 	}
 	if ( $GCcomp < 24 or $GCcomp > 71 ) {
@@ -670,22 +673,22 @@ open ( OUTTBL, ">".$infile.".hairpins.tbl.out.tbl" ) or die "Can't open an outpu
 my $k=0;
 my @blacklist = ('Unique', 'Hit', 'Hit ID');
 my (%stock, %stocknames);
-while ( $line = <RESULTS> )
+while (my $line = <RESULTS> )
 {
 	chomp $line;
 	my @lineelems = split(/\t/, $line);
 
 	if ($line ne "" && substr($line, 0, 2) ne "\t" && !(grep( /^$lineelems[0]$/, @blacklist ))){
-		my $n = scalar(@lineelems);
-		my $temp = $line;
-		if ($n < 22){
-			$temp .= $lines[$lineID+1];
-			my @tmparr = split(/\t/, $lines[$lineID+1]);
-			$n += scalar(@tmparr);
-			if ($n < 22){
-				$temp .= $lines[$lineID+2];
-			}
-		}
+ 		my $temp = $line;
+# 		my $n = scalar(@lineelems);
+# 		if ($n < 22){
+# 			$temp .= $lines[$lineID+1];
+# 			my @tmparr = split(/\t/, $lines[$lineID+1]);
+# 			$n += scalar(@tmparr);
+# 			if ($n < 22){
+# 				$temp .= $lines[$lineID+2];
+# 			}
+# 		}
 		my @store = split(/\t/, $temp);
 		$k+=1;
 		my $loc = substr($store[15], 0, 1);
@@ -693,10 +696,10 @@ while ( $line = <RESULTS> )
 		if ($sRNAseq eq "true") {
 			$mir = $store[4].= "-".$loc."p";
 		} else {
-			$mirID = (split(/\./, (split(/-/, $store[1]))[1]))[0];
+			my $mirID = (split(/\./, (split(/-/, $store[1]))[1]))[0];
 			$mir = $mirID;
 			$mir =~ s/[^\d]//g;
-			$homolog_loc = (split(/-/, $store[4]))[-1];
+			my $homolog_loc = (split(/-/, $store[4]))[-1];
 			if (grep(/^$homolog_loc$/, ("3p", "5p")) && $loc ne substr($homolog_loc, 0, 1)){
 				$mir = $mir;
 			} else {
@@ -728,7 +731,7 @@ if ( $run eq "long" ){
 	open ( DISCARD, ">>".$infile.".rejects" ) or die "Can't open an output file!\n";
 	my $suspecthairpins = 0;
 
-	while ( $line = <SUSPECTTABLE> ) {
+	while (my $line = <SUSPECTTABLE> ) {
 		chomp $line;
 		next if $line =~ /^#/;
 		my ( $uniqueid, $sseqid, $mirstart, $mirend, $mirnaid, $length, $sstart, $send, $revstart, $revend ) = split /\t/, $line;
@@ -774,10 +777,10 @@ if ( $run eq "long" ){
 		}
 		$hairpinlength = $hairpinend - $hairpinstart + 1;
 	
-		$hairpinseq = substr $seq, ($hairpinstart-1), $hairpinlength;
-		$matseq = substr $seq, ($sstart-1), $length;	
-		$matstart = $sstart - $hairpinstart+1;
-		$matend = $send - $hairpinstart+1;
+		my $hairpinseq = substr $seq, ($hairpinstart-1), $hairpinlength;
+		my $matseq = substr $seq, ($sstart-1), $length;	
+		my $matstart = $sstart - $hairpinstart+1;
+		my $matend = $send - $hairpinstart+1;
 		print LOGFILE2 "Hairpin stats (start, end, length):\n";
 		print LOGFILE2 "$hairpinstart\t$hairpinend\t$hairpinlength\n";
 		print LOGFILE2 "Running UNAFold.pl on the hairpin sequence... ";
@@ -800,11 +803,11 @@ if ( $run eq "long" ){
 	# Examine the st file for unpaired bases in the miRNA sequence
 		open ( HAIRPINFOLD, $uniqueid.".hairpin.fsa.st" ) or die "where is the st file?";
 
-		$linecount = 0;
+		my $linecount = 0;
 		$seq = "";
-		$mfe=0; 
-		$nucleotides="";
-		while ($line = <HAIRPINFOLD>) {
+		my $mfe=0; 
+		my $nucleotides="";
+		while (my $line = <HAIRPINFOLD>) {
 			chomp $line;
 			$linecount++;
 			if ( $linecount==2 ) {
@@ -817,9 +820,9 @@ if ( $run eq "long" ){
 		}
 		close HAIRPINFOLD;
 
-		@spl = split(//, $seq);
-		@stack = ();
-		%data=();
+		my @spl = split(//, $seq);
+		my @stack = ();
+		my %data=();
 		$linecount = 0;
 		foreach my $i (@spl) { 
 			$linecount++;
@@ -828,12 +831,12 @@ if ( $run eq "long" ){
 			} elsif ( $i eq "(" ) {
 				push(@stack, $linecount);
 			} elsif ( $i eq ")" ) {
-				$value = pop(@stack);
+				my $value = pop(@stack);
 				$data{$linecount} = $value;
 				$data{$value} = $linecount;
 			}
 		}
-		$GCcount = () = $nucleotides =~ /G|C/g;
+		my $GCcount = () = $nucleotides =~ /G|C/g;
 
 		my $starstart = 0;
 		my $starend = 0;
@@ -861,17 +864,17 @@ if ( $run eq "long" ){
 			}
 		}
 
-		$start = min($starstart, $matstart, $starend, $matend);
-		$end = max($starstart, $matstart, $starend, $matend);
-		$multiloopflag=0;
-		$headflag = 0;
-		$check = 0;
-		$headsize = 0;
+		my $start = min($starstart, $matstart, $starend, $matend);
+		my $end = max($starstart, $matstart, $starend, $matend);
+		my $multiloopflag=0;
+		my $headflag = 0;
+		my $check = 0;
+		my $headsize = 0;
 		my $k = 0;
 		$linecount=0;
 		foreach my $i (@spl) { 
 			$linecount++;
-			$temp = $data{$linecount} if $linecount == $start;
+			my $temp = $data{$linecount} if $linecount == $start;
 			if ($linecount >= $matstart && $linecount <= $matend) {
 				$ssflag++ if $data{$linecount} == 0;
 			}	
@@ -944,7 +947,7 @@ if ( $run eq "long" ){
 		}
 		my $mfei = $amfe/$GCcomp;
 		my $mism = 0;
-		for ($loopcount = 0; $loopcount < $length; $loopcount++) {
+		for (my $loopcount = 0; $loopcount < $length; $loopcount++) {
 			$mism++ if substr ($conseq, $loopcount, 1) ne substr ($matseq, $loopcount, 1);
 		}
 		if ( $GCcomp < 24 or $GCcomp > 71 ) {
@@ -974,32 +977,32 @@ if ( $run eq "long" ){
 	my $k=0;
 	my @blacklist = ('Unique', 'Hit', 'Hit ID');
 	my (%stock, %stocknames);
-	while ( $line = <SUSPECTRESULTS> )
+	while (my $line = <SUSPECTRESULTS> )
 	{
 		chomp $line;
 		my @lineelems = split(/\t/, $line);
 
 		if ($line ne "" && substr($line, 0, 2) ne "\t" && !(grep( /^$lineelems[0]$/, @blacklist ))){
-			my $n = scalar(@lineelems);
 			my $temp = $line;
-			if ($n < 22){
-				$temp .= $lines[$lineID+1];
-				my @tmparr = split(/\t/, $lines[$lineID+1]);
-				$n += scalar(@tmparr);
-				if ($n < 22){
-					$temp .= $lines[$lineID+2];
-				}
-			}
+#	 		my $n = scalar(@lineelems);
+# 	 		if ($n < 22){
+# 	 			$temp .= $lines[$lineID+1];
+# 	 			my @tmparr = split(/\t/, $lines[$lineID+1]);
+# 	 			$n += scalar(@tmparr);
+# 	 			if ($n < 22){
+# 	 				$temp .= $lines[$lineID+2];
+# 	 			}
+# 	 		}
 			my @store = split(/\t/, $temp);
 			my $loc = substr($store[15], 0, 1);
 			my $mir="";
 			if ($sRNAseq eq "true") {
 				$mir = $store[4].= "-".$loc."p";
 			} else {
-				$mirID = (split(/\./, (split(/-/, $store[1]))[1]))[0];
+				my $mirID = (split(/\./, (split(/-/, $store[1]))[1]))[0];
 				$mir = $mirID;
 				$mir =~ s/[^\d]//g;
-				$homolog_loc = (split(/-/, $store[4]))[-1];
+				my $homolog_loc = (split(/-/, $store[4]))[-1];
 				if (grep(/^$homolog_loc$/, ("3p", "5p")) && $loc ne substr($homolog_loc, 0, 1)){
 					$mir = $mir;
 				} else {
