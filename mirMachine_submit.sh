@@ -75,6 +75,7 @@ while [ "$1" != "" ]; do
 		;;
         -s | --sRNAseq )       
             sRNAseq="true"
+            mismatches=0
 		;;
         -lmax )
             shift        
@@ -132,7 +133,6 @@ else
 fi
 
 if [ $sRNAseq == "true" ]; then
-    mismatches=0;
     echo "==============================================================================="
     echo "sRNAseq preprocessing..."
     echo "==============================================================================="
