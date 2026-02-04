@@ -1,9 +1,9 @@
 # mirMachine (2021): Genome-wide miRNA discovery and annotation pipeline for plant genomes  
-![DOI](https://img.shields.io/badge/DOI-JoVE%202021-blue)
+[![DOI](https://img.shields.io/badge/PubMed-2021-blue)](https://pubmed.ncbi.nlm.nih.gov/33999024/)
 ![Perl](https://img.shields.io/badge/Perl-5.26+-purple)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-> **📄 Publication:** mirMachine: A One-Stop Shop for Plant miRNA Annotation — *Journal of Visualized Experiments (JoVE), 2021*  
+> **📄 Publication:** mirMachine: A One-Stop Shop for Plant miRNA Annotation — [*Journal of Visualized Experiments (JoVE), 2021*](https://pubmed.ncbi.nlm.nih.gov/33999024/)<br/>
 > **👤 Role:** First author and primary developer — designed algorithm and implemented full pipeline  
 > **🎯 Impact:** Automated, genome-wide identification of known and novel miRNAs from plant genomes<br/>
 > **Tech:** Perl • BLAST+ • RNAfold
@@ -49,7 +49,7 @@ conda create -n mirmachine -c bioconda blast perl viennarna
 conda activate mirmachine
 ```
 
-## Example Usage
+## Quick Start
 
 **Homology-based miRNA identification:**
 ```bash
@@ -81,12 +81,8 @@ bash mirMachine_submit.sh \
   - Runtime scales with genome size and BLAST search space
 
 ## Citation
-Cagirici et al., 
-“mirMachine: a one-stop shop for plant miRNA annotation” 
-Journal of Visualized Experiments (JoVE), 2021
-**DOI:** 10.3791/62430
+Cagirici et al., “mirMachine: a one-stop shop for plant miRNA annotation,” Journal of Visualized Experiments (JoVE), 2021. [PubMed](https://pubmed.ncbi.nlm.nih.gov/33999024/)
 
 ## Resources
 - **Video protocol:** app.jove.com/v/62430/mirmachine-a-one-stop-shop-for-plant-mirna-annotation
 - **Test data:** [Download from Releases/v1](https://github.com/hbusra/mirMachine/releases/tag/v1)
-- **Issues:** Report bugs or request features via GitHub Issues
