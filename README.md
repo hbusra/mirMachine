@@ -1,69 +1,92 @@
-# mirMachine
-mirMachine (2021): Automated pipeline for the annotation of high-confidence miRNAs from genomic sequences
+# mirMachine (2021): Genome-wide miRNA discovery and annotation pipeline for plant genomes  
+![DOI](https://img.shields.io/badge/DOI-JoVE%202021-blue)
+![Perl](https://img.shields.io/badge/Perl-5.26+-purple)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-## Key Highlights
-- Genome-wide microRNA (miRNA) discovery and annotation pipeline for plant genomes  
-- Rule-based homology and structural validation for reproducibility  
-- Publication: [JoVE (2021)](https://app.jove.com/t/62430/mirmachine-a-one-stop-shop-for-plant-mirna-annotation)  
-- Produces interpretable miRNA annotations for downstream genomic and regulatory analysis
-
-**Test data and outputs:** [Releases/v1 (TestData)](https://github.com/hbusra/mirMachine/releases/tag/v1)
+> **📄 Publication:** mirMachine: A One-Stop Shop for Plant miRNA Annotation — *Journal of Visualized Experiments (JoVE), 2021*  
+> **👤 Role:** First author and primary developer — designed algorithm and implemented full pipeline  
+> **🎯 Impact:** Automated, genome-wide identification of known and novel miRNAs from plant genomes<br/>
+> **Tech:** Perl • BLAST+ • RNAfold
 
 ## Overview
-mirMachine is a fully automated, rule-based computational pipeline for **known and novel miRNA identification and annotation**. It combines sequence homology with hairpin structural validation to generate **high-confidence annotations** suitable for:
-- Comparative genomics
-- Functional analysis
-- Genome annotation workflows
+mirMachine is a fully automated, rule-based computational pipeline for **known and novel miRNA identification and annotation**. It combines sequence homology with hairpin structural validation to identify **high-confidence miRNA** candidates suitable for comparative genomics and functional analysis.
 
-Benchmarked on Arabidopsis thaliana and wheat, mirMachine delivers high sensitivity and reduced false positives.
+**Use cases:** Genome annotation projects • miRNA family expansion studies
 
-## Core Features
-- Homology-based identification of known miRNAs  
-- Rule-based discovery of novel miRNAs  
-- RNA secondary structure validation (hairpin enforcement)  
-- Genome-wide miRNA localization  
-- Optional sRNA-seq integration for expression evidence and novel miRNA discovery  
-- Fully automated execution
+## Methods
+- **Algorithm:** Homology search (BLAST vs. miRBase) → Precursor extraction → Structural validation (RNAfold hairpin prediction) → Genomic mapping
+- **Validation:** Benchmarked on *Arabidopsis thaliana* (TAIR10) and wheat (IWGSC RefSeq v2.0) genomes
+- **Data:** Test data and example outputs available at [Releases/v1](https://github.com/hbusra/mirMachine/releases/tag/v1)
 
-## Quick Start
-1. Install dependencies: BLAST+, RNAfold, Perl  
-2. Add mirMachine scripts to your PATH  
-3. Run test data:
+### Pipeline Overview
+1. Homology-based candidate identification (BLAST vs. miRBase)
+2. Precursor extraction and hairpin folding (RNAfold)
+3. Rule-based filtering (structure + thermodynamics)
+4. Optional: sRNA-seq integration for expression evidence and novel miRNA discovery
+5. Genomic coordinate mapping and annotation output
+
+
+## Installation
+Step-by-step installation and usage are available in the JoVE video protocol.<br/>
+
+**Dependencies:** BLAST+ (2.9+), ViennaRNA (RNAfold), Perl 5.26+
 
 ```bash
-# Homology-based run
-bash mirMachine_submit.sh -f genome.fasta -i mature_high_conf_v22_1.fa.filtered.fasta -n 10
+# Clone repository
+git clone https://github.com/hbusra/mirMachine.git
+cd mirMachine
 
-# With sRNA-seq
-bash mirMachine_submit.sh -f genome.fasta -i smallRNA.fa -sRNAseq -lmax 24 -lmin 19 -RPM 10
+# Add to PATH
+export PATH=$PATH:$(pwd)
+
+# Verify installation
+bash mirMachine_submit.sh --help
 ```
 
-**Outputs**
-- Tabular annotations with genomic coordinates (*.tbl)
-- Mature miRNA and pre-miRNA (hairpin) FASTA files
-- Log files reporting QC, warnings, and pipeline diagnostics
+### Conda (Recommended):
+```bash
+conda create -n mirmachine -c bioconda blast perl viennarna
+conda activate mirmachine
+```
 
-Step-by-step installation and usage are available in the [JoVE video](https://app.jove.com/v/62430/mirmachine-a-one-stop-shop-for-plant-mirna-annotation).
+## Example Usage
 
+**Homology-based miRNA identification:**
+```bash
+bash mirMachine_submit.sh \
+  -f genome.fasta \
+  -i mature_high_conf_v22_1.fa.filtered.fasta \
+  -n 10
+```
 
-## Modes of Operation
+**Novel miRNA Discovery with sRNA-seq:**
+```bash
+bash mirMachine_submit.sh \
+  -f genome.fasta \
+  -i smallRNA.fa \
+  -sRNAseq \
+  -lmax 24 -lmin 19 \
+  -RPM 10
+```
 
-**1. Homology-Based miRNA Identification**
-- Requires only a genome FASTA
-- Predicts genome-wide miRNA candidates
-- Outputs mature and precursor sequences plus genomic coordinates
+**Outputs:**
+- `*.tbl` — Tabular annotations with genomic coordinates
+- `*_mature.fa` — Mature miRNA sequences
+- `*_hairpin.fa` — Precursor (pre-miRNA) sequences
+- `*.log` — Pipeline diagnostics
 
-**2. Novel miRNA Discovery with sRNA-seq (Optional)**
-- Pre-processing of sRNA-seq reads (adapter trimming and FASTQ→FASTA conversion) required
-- Supports abundance filtering and mismatch control
-
-
-## Benchmarking
-- **Higher sensitivity** than miRDP2 in Arabidopsis
-- **Improved performance** in wheat when combining homology and expression evidence
-- **Reduced false positives** in complex plant genomes
+## Notes
+  - Designed specifically for plant genomes
+  - Conservative filtering favors precision over exhaustive recall
+  - Runtime scales with genome size and BLAST search space
 
 ## Citation
 Cagirici et al., 
 “mirMachine: a one-stop shop for plant miRNA annotation” 
 Journal of Visualized Experiments (JoVE), 2021
+**DOI:** 10.3791/62430
+
+## Resources
+- **Video protocol:** app.jove.com/v/62430/mirmachine-a-one-stop-shop-for-plant-mirna-annotation
+- **Test data:** [Download from Releases/v1](https://github.com/hbusra/mirMachine/releases/tag/v1)
+- **Issues:** Report bugs or request features via GitHub Issues
